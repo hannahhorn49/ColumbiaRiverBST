@@ -7,6 +7,7 @@ Node::Node(int val) {
     data = val;
     left = nullptr;
     right = nullptr;
+
 }
 
 Node::~Node() {
@@ -35,13 +36,18 @@ void BST::insert(int val) {
     insert(root, val);
 }
 
-bool BST::search(int val) {
-    return search(root, val);
-}
 
 void BST::print_tree() {
     print_tree(root, 0);
 }
+
+void BST::make_node(std::string class_pick){
+
+    //this class will allow the user to make a new node
+    //probbaly will be called into insert 
+    //to ask the user what information he wants to add about the stops he adds
+}
+
 
 void BST::insert(Node*& node, int val) { //passing the Node by reference (not modifying pointer itself unless the root)
     //two cases: empty tree and non empty tree 
@@ -66,26 +72,7 @@ void BST::insert(Node*& node, int val) { //passing the Node by reference (not mo
     return;
 }
 
-bool BST::search(Node* node, int val) {
-    if(node == nullptr)
-    {
-        //indicates that it is not in the tree 
-        return false;
-    }
-    else if (node->data == val)
-    {
-        return true;
-    }
-    else if (node->data > val)
-    {
-        return search(node->left, val);
-    }
-    else
-    {
-        return search(node->right, val);
-    }
 
-}
 
 void BST::print_tree(Node* node, int space) {
     if (node == nullptr) {

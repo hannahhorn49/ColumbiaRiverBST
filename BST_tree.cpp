@@ -2,26 +2,41 @@
 #include <iostream>
 #include <iomanip>
 
-// for our node constructor do we want to pass in a name to it (tributary, dam)
-Node::Node(std::string name)
+// this is our constructor that will create a classic_Node, tributaray or dam struct based on type parameter
+Node::Node(std::string name, std::string type)
 {
-    name = name;
-    left = nullptr;
-    right = nullptr;
-    parent = nullptr;
+    this->data = new classic_Node(name);
+    this->type = type;
 }
 
+// implement getters here
+Node *&Node::goLeft()
+{
+    return data->left;
+}
+
+Node *&Node::goRight()
+{
+    return data->right;
+}
+
+Node *&Node::getParent()
+{
+    return data->parent;
+}
+
+void Node::setParent(Node *ptr)
+{
+    data->parent = ptr;
+}
+
+// NOTE: I think we need to fix this here
 Node::~Node()
 {
-    if (left != nullptr)
+    if (data)
     {
-        delete left;
-        left = nullptr;
-    }
-    if (right != nullptr)
-    {
-        delete right;
-        right = nullptr;
+        delete data;
+        data = nullptr;
     }
 }
 
@@ -30,82 +45,101 @@ BST_class::BST_class()
     mouth = nullptr;
 }
 
+// this looks like it only deletes one node -- not the whole tree
 BST_class::~BST_class()
 {
-    if (mouth != nullptr)
-    {
-        delete mouth;
-        mouth = nullptr;
-    }
+    destroy_tree(mouth); // recursively deletes tree
+    mouth = nullptr;
 }
 
-void BST_class::insert_node()
+// recursive helper here
+void BST_class::destroy_tree(Node *node)
 {
-    // this is the main function that kicks off adding any kind of node
-    // 1. prompt the user: "What kind of node do you want to insert? (branch / tributary / dam)"
-    // 2. get the input string
-    // 3. call make_node(input_string)
+    if (node == nullptr)
+        return;
+
+    destroy_tree(node->goLeft());
+    destroy_tree(node->goRight());
+
+    delete node;
 }
 
-void BST_class::make_node(std::string class_pick)
+void BST_class::insert_node(std::string type, std::string name)
 {
-    // takes the user input and decides which function to call
-    if (class_pick == "branch")
+    // based on the type string (call insert branch, insert dam or tributary)
+    if (type == "branch")
     {
-        make_branch();
+        insert_branch(mouth, name);
     }
-    else if (class_pick == "tributary")
+    else if (type == "tributary")
     {
-        make_tributary();
+        insert_tributary(mouth, name);
     }
-    else if (class_pick == "dam")
+    else if (type == "dam")
     {
-        make_dam();
+        insert_dam(mouth, name);
     }
     else
     {
-        std::cout << "Unknown type.\n";
+        std::cout << "Unknown node type.\n";
     }
 }
 
-void BST_class::make_branch()
+void BST_class::insert_branch(Node *&node, std::string name)
 {
-    // call insert_branch(node)
-}
+    // if node == nullptr, make new node with type branch?
+    // otherwise keep going left
 
-void BST_class::make_dam()
-{
-    // 1. ask user: "Enter name for dam:"
-    // 2. also ask: "Enter tempWater, fish_passage rating, and dam height:"
-    // 3. get data
-    // 4. call insert_dam(mouth, name)
-}
-
-void BST_class::make_tributary()
-{
-    // 1. ask user: "Enter name for tributary:"
-    // 2. also ask: "Enter tributary's length, basin size, and avg water discharge:"
-    // 3. get data
-    // 4. call insert_tributary(mouth, name)
-}
-
-void BST_class::insert_branch(Node *&node)
-{
-    // if node == nullptr -> create new branch node here
-    // else we need to traverse??
-    // how do we figure out where a branch gets inserted
+    if (node == nullptr)
+    {
+        node = new Node(name, "branch");
+        return;
+    }
+    insert_branch(node->goLeft(), name); // we want to recurse down the left
+    // creates the left heavy backbone --> represents the river
 }
 
 void BST_class::insert_tributary(Node *&node, std::string name)
 {
-    // if node == nullptr -> create new tributary node
-    // else need to recurse left or right??
+    // always goes to the right child of the branch node
+    if (node == nullptr)
+    {
+        std::cout << "Cannot insert tributary: no branch to attach to.\n";
+        return;
+    }
+
+    if (node->goRight() == nullptr)
+    {
+        node->goRight() = new Node(name, "tributary");
+        node->goRight()->getParent() = node;
+    }
+    else
+    {
+        insert_tributary(node->goLeft(), name); // recurse to find next branch
+        // basically want to try and insert a tributary on the right of the first avilable branch node
+        // if the current node's right child is full, recurse left to next branch
+    }
 }
 
 void BST_class::insert_dam(Node *&node, std::string name)
 {
-    // if node == nullptr -> create new dam node
-    // else need to recurse left or right??
+    // traverse and insert on the left or under an existing branch node
+    if (node == nullptr)
+    {
+        std::cout << "Cannot insert dam: no node found.\n";
+        return;
+    }
+
+    if (node->goLeft() == nullptr)
+    {
+        node->goLeft() = new Node(name, "dam");
+        node->goLeft()->getParent() = node;
+    }
+    else
+    {
+        insert_dam(node->goLeft(), name); // keep going down the left
+        // same logic as branches
+    }
 }
 
 void BST_class::print_tree()

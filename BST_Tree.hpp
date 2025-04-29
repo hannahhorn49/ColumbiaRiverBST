@@ -27,8 +27,19 @@ private:
         double height;
     };
 
+    classic_Node *data;
+    std::string type;
+
 public:
-    Node(std::string name);
+    Node(std::string name, std::string type);
+
+    // accessors
+    Node *&goLeft();
+    Node *&goRight();
+    Node *&getParent();
+
+    void setParent(Node *ptr); // sets the parent pointer
+
     ~Node();
 };
 
@@ -41,14 +52,10 @@ public:
     BST_class();
     ~BST_class();
 
-    void insert_node();                     // will call make_node() to create new node based on type?
-    void make_node(std::string class_pick); // decided which kind of node to make
+    void insert_node(std::string type, std::string name);
 
-    void make_branch();    // prompt user for branch data
-    void make_tributary(); // prompt user for tributary data
-    void make_dam();       // prompt user for dam data
-
-    void insert_branch(Node *&node);                      // insert a branch node specifically
+    // tree operations here
+    void insert_branch(Node *&node, std::string name);    // insert a branch node specifically
     void insert_dam(Node *&node, std::string name);       // insert a dam
     void insert_tributary(Node *&node, std::string name); // insert a tributary
 
@@ -63,34 +70,22 @@ private:
     void print_tree(Node *node, int space); // recursive helper to print the tree
 };
 
-// class BST_program
-// {
+class BST_program
+{
 
-// public:
-//     void print_tree();
-//     void insert_node(int val);
-//     void get_info(); // prints info in table like fashion
-//     void explore_river(std::string direction);
+public:
+    void showMenu(); // this shows user the main menu (e.g. add node, explore river, print, exit)
 
-//     // should these be the same? as the class features?
-//     void insert_node(); // should these take anything in??
-//     void insert_branch();
-//     void insert_dam();
+    void add_node(); // will prompt user for a node type (branch, dam, tributary) + any extra info
+    // this calls bst.insert_node(type, name)
+    void explore_river(); // display options "go up/down/right/view info"
+    // this will be based on direction
+    void print_river();
 
-//     void make_branch();
-//     void make_tributary();
-//     void make_dam();
-
-// private:
-//     void get_info(Node *node);
-
-//     void print_tree(Node *node, int space);
-
-//     void insert_node(Node *&node);
-//     void insert_tributary(Node *&node, std::string name);
-//     void insert_dam(Node *&node, std::string name);
-
-//     void explore_river(Node *node, std::string direction);
-// };
+private:
+    Node *current_location; // pointer to where the user is in the river
+    // function to update the current location
+    void print_node_info(Node *node);
+};
 
 #endif

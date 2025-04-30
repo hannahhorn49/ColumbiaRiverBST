@@ -1,50 +1,8 @@
-#ifndef BST_TREE_HPP
-#define BST_TREE_HPP
+#ifndef BST_Tree_HPP
+#define BST_Tree_HPP
 
 #include <string> // needed for std::string name
-
-class Node // represents each individual "thing" in river (e.g. branch, tributary, dam)
-{
-private:
-    struct classic_Node // will be our basic node
-    {
-        std::string name;
-        Node *left;
-        Node *right;
-        Node *parent;
-    };
-    struct Tributary : public classic_Node // inherits from classic node
-    {
-        double length;
-        double basin_size;
-        double average_water_discharge;
-    };
-
-    struct Dam : public classic_Node // also inherits from classic node
-    {
-        double tempWater;
-        int fish_passage;
-        double height;
-    };
-
-    classic_Node *data;
-    std::string type;
-
-public:
-    Node(std::string name, std::string type);
-
-    // accessors
-    Node *&goLeft();
-    Node *&goRight();
-    Node *&getParent();
-
-    void setParent(Node *ptr); // sets the parent pointer
-
-    ~Node();
-};
-
-// might create three different classes for Branch Node, Dam Node, Tributary
-// struct would not be a bad idea
+#include "Node.hpp"
 
 class BST_class // this class represents the actual binary search tree (river system)
 {
@@ -68,6 +26,7 @@ public:
 private:
     Node *mouth;                            // river's starting point (aka the root)
     void print_tree(Node *node, int space); // recursive helper to print the tree
+    void destroy_tree(Node *node);
 };
 
 class BST_program

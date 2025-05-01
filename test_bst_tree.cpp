@@ -33,7 +33,7 @@ bool testInsertTributary()
 
     // execution
     river.insert_branch("MainRiver");
-    river.insert_tributary("Tributary1", 50.0, 300.0, 45.2);
+    river.insert_tributary("Cowlitz", "right", 169, 6698, 286.6);
 
     Node *mouth = river.get_mouth();
     Node *trib = mouth->goRight();
@@ -41,7 +41,7 @@ bool testInsertTributary()
     river.print_tree(); // for debuggin purposees
 
     // validation
-    if (trib == nullptr || trib->getName() != "Tributary1")
+    if (trib == nullptr || trib->getName() != "Cowlitz")
     {
         std::cout << "test failed, tributary not correctly added.\n";
         return false;
@@ -59,7 +59,7 @@ bool testInsertDam()
 
     // execution
     river.insert_branch("MainRiver");
-    river.insert_dam("Dam1", 15.5, 800, 22.0);
+    river.insert_dam("Bonneville", 197, 1190, 1937, "Lake Bonneville");
 
     // validation
     Node *mouth = river.get_mouth();
@@ -67,7 +67,7 @@ bool testInsertDam()
 
     river.print_tree(); // for debuggin purposees
 
-    if (dam == nullptr || dam->getName() != "Dam1")
+    if (dam == nullptr || dam->getName() != "Bonneville")
     {
         std::cout << "test failed, dam not not correctly added.\n";
         return false;
@@ -87,9 +87,9 @@ bool testTraverseExplore()
 
     // execution
     river.insert_branch("MainRiver");
-    river.insert_branch("Branch1");                     // goes left of MainRiver
-    river.insert_dam("Dam1", 14.3, 700, 30.5);          // goes left of Branch1
-    river.insert_tributary("Trib1", 60.5, 420.0, 18.2); // goes right of MainRiver
+    river.insert_branch("Branch1");                                   // goes left of MainRiver
+    river.insert_dam("McNary", 183, 1133, 1954, "Lake Wallula");      // goes left of Branch1
+    river.insert_tributary("Willamette", "Left", 301, 28949, 1098.7); // goes right of MainRiver
 
     // validation
     Node *mouth = river.get_mouth();
@@ -101,9 +101,9 @@ bool testTraverseExplore()
 
     if (!branch1 || branch1->getName() != "Branch1")
         return false;
-    if (!dam1 || dam1->getName() != "Dam1")
+    if (!dam1 || dam1->getName() != "McNary")
         return false;
-    if (!trib1 || trib1->getName() != "Trib1")
+    if (!trib1 || trib1->getName() != "Willamette")
         return false;
 
     // clean up
@@ -121,8 +121,8 @@ bool testSetInfo()
 
     // execution
     river.insert_branch("MainRiver");
-    river.insert_dam("Dam1", 10.5, 1000, 25.3);
-    river.insert_tributary("Trib1", 50.0, 500.0, 20.0);
+    river.insert_dam("Priest Rapids", 178, 955, 1961, "Priest Rapids Lake");
+    river.insert_tributary("Snake River", "Left", 1735, 160938, 1755.6);
 
     // validation
     river.print_tree();

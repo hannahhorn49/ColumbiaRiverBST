@@ -10,12 +10,10 @@ public:
     BST_class();
     ~BST_class();
 
-    void insert_node(std::string type, std::string name);
-
-    // tree operations here
-    void insert_branch(Node *&node, std::string name);    // insert a branch node specifically
-    void insert_dam(Node *&node, std::string name);       // insert a dam
-    void insert_tributary(Node *&node, std::string name); // insert a tributary
+    // tree operations here (simplified for public use)
+    void insert_branch(const std::string &name);
+    void insert_dam(const std::string name, double tempWater, int capacity, double height);
+    void insert_tributary(const std::string name, double length, double basinSize, double discharge);
 
     void print_tree();                  // prints the river system visually
     Node *get_mouth() { return mouth; } // for testing
@@ -27,6 +25,11 @@ private:
     Node *mouth;                            // river's starting point (aka the root)
     void print_tree(Node *node, int space); // recursive helper to print the tree
     void destroy_tree(Node *node);
+
+    // recursive insert helpers
+    void recursive_branch_insert(Node *&node, std::string name);
+    void recursive_dam_insert(Node *&node, std::string name, double tempWater, int capacity, double height);
+    void recursive_trib_insert(Node *&node, std::string name, double length, double basinSize, double discharge);
 };
 
 class BST_program
@@ -44,6 +47,7 @@ public:
 private:
     Node *current_location; // pointer to where the user is in the river
     // function to update the current location
+    BST_class river;
     void print_node_info(Node *node);
 };
 

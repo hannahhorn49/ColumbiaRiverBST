@@ -35,47 +35,53 @@ public:
 class Dam : public Node
 {
 private:
-    double tempWater;
+    int year_completed;
     int capacity;
-    double height;
+    int height;
+    std::string reservoir_formed;
 
 public:
-    Dam(const std::string &name, double tempWater, int capacity, double height);
+    Dam(const std::string &name, int height, int capacity, int year_completed, std::string reservoir_formed);
 
     // this will override the getInfo method in node class (right function called based on object type)
     virtual std::string getInfo() const override
     {
         return "Dam: " + getName() + " | Height: " + std::to_string(height) +
                " | Capacity: " + std::to_string(capacity) +
-               " | Flow: " + std::to_string(tempWater);
+               " | Year Completed: " + std::to_string(year_completed) +
+               " | Reservoir Formed: " + reservoir_formed;
     }
 
-    double getTempWater() const;
     int getCapacity() const;
-    double getHeight() const;
+    int getHeight() const;
+    int getYear() const;
+    std::string getReservoir() const;
 };
 
 class Tributary : public Node
 {
 private:
-    double length;
+    int length;
     double basinSize;
     double averageDischarge;
+    std::string direction;
 
 public:
-    Tributary(const std::string &name, double length, double basinSize, double discharge);
+    Tributary(const std::string &name, std::string direction, int length, double basinSize, double averageDischarge);
 
     // this will override the getInfo method in node class (right function called based on object type)
     virtual std::string getInfo() const override
     {
-        return "Tributary: " + getName() + " | Length: " + std::to_string(length) +
-               " | Area: " + std::to_string(basinSize) +
-               " | Avg Flow: " + std::to_string(averageDischarge);
+        return "Tributary: " + getName() + " | Direction: " + direction +
+               " | Length: " + std::to_string(length) +
+               " | Basin Size: " + std::to_string(basinSize) +
+               " | Avg Discharge: " + std::to_string(averageDischarge);
     }
 
-    double getLength() const;
+    int getLength() const;
     double getBasinSize() const;
     double getAverageDischarge() const;
+    std::string getDirection() const;
 };
 
 #endif

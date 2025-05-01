@@ -12,14 +12,18 @@ public:
 
     // tree operations here (simplified for public use)
     void insert_branch(const std::string &name);
-    void insert_dam(const std::string name, double tempWater, int capacity, double height);
-    void insert_tributary(const std::string name, double length, double basinSize, double discharge);
+    void insert_dam(const std::string name, int height, int capacity, int year_completed, std::string reservoir_formed);
+    void insert_tributary(const std::string name, std::string direction, int length, double basinSize, double averageDischarge);
 
     void print_tree();                  // prints the river system visually
     Node *get_mouth() { return mouth; } // for testing
 
     // somehow puts it in a workable file
     void store_in_file();
+
+    // function to load trib and dam data from our csv files
+    void loadDamData(const std::string &filename);
+    void loadTribData(const std::string &filename);
 
 private:
     Node *mouth;                            // river's starting point (aka the root)
@@ -28,8 +32,8 @@ private:
 
     // recursive insert helpers
     void recursive_branch_insert(Node *&node, std::string name);
-    void recursive_dam_insert(Node *&node, std::string name, double tempWater, int capacity, double height);
-    void recursive_trib_insert(Node *&node, std::string name, double length, double basinSize, double discharge);
+    void recursive_dam_insert(Node *&node, std::string name, int height, int capacity, int year_completed, std::string reservoir_formed);
+    bool recursive_trib_insert(Node *&node, const std::string name, std::string direction, int length, double basinSize, double averageDischarge);
 };
 
 class BST_program

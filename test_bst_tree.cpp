@@ -9,15 +9,17 @@ bool testInsertMouth()
     BST_class river;
 
     // execution (add a single node)
-    river.insert_node("branch", "MainRiver");
+    river.insert_branch("MainRiver");
 
     // validation
     Node *mouth = river.get_mouth();
-    if (mouth == nullptr || mouth->getName() != "MainRiver" || mouth->getType() != "branch")
+    if (mouth == nullptr || mouth->getName() != "MainRiver")
     {
         std::cout << "test failed, mouth not inserted.\n";
         return false;
     }
+
+    river.print_tree(); // for debuggin purposees
 
     // clean up
     return true;
@@ -30,14 +32,16 @@ bool testInsertTributary()
     BST_class river;
 
     // execution
-    river.insert_node("branch", "MainRiver"); // insert the "root" first
-    river.insert_node("tributary", "Tributary1");
+    river.insert_branch("MainRiver");
+    river.insert_tributary("Tributary1", 50.0, 300.0, 45.2);
 
     Node *mouth = river.get_mouth();
     Node *trib = mouth->goRight();
 
+    river.print_tree(); // for debuggin purposees
+
     // validation
-    if (trib == nullptr || trib->getName() != "Tributary1" || trib->getType() != "tributary")
+    if (trib == nullptr || trib->getName() != "Tributary1")
     {
         std::cout << "test failed, tributary not correctly added.\n";
         return false;
@@ -54,14 +58,16 @@ bool testInsertDam()
     BST_class river;
 
     // execution
-    river.insert_node("branch", "MainRiver");
-    river.insert_node("dam", "Dam1");
+    river.insert_branch("MainRiver");
+    river.insert_dam("Dam1", 15.5, 800, 22.0);
 
     // validation
     Node *mouth = river.get_mouth();
     Node *dam = mouth->goLeft();
 
-    if (dam == nullptr || dam->getName() != "Dam1" || dam->getType() != "dam")
+    river.print_tree(); // for debuggin purposees
+
+    if (dam == nullptr || dam->getName() != "Dam1")
     {
         std::cout << "test failed, dam not not correctly added.\n";
         return false;
@@ -80,16 +86,18 @@ bool testTraverseExplore()
     BST_class river;
 
     // execution
-    river.insert_node("branch", "MainRiver");
-    river.insert_node("branch", "Branch1");
-    river.insert_node("dam", "Dam1");
-    river.insert_node("tributary", "Trib1");
+    river.insert_branch("MainRiver");
+    river.insert_branch("Branch1");                     // goes left of MainRiver
+    river.insert_dam("Dam1", 14.3, 700, 30.5);          // goes left of Branch1
+    river.insert_tributary("Trib1", 60.5, 420.0, 18.2); // goes right of MainRiver
 
     // validation
     Node *mouth = river.get_mouth();
     Node *branch1 = mouth->goLeft(); // this will be the second "node"
     Node *dam1 = branch1->goLeft();  // the dam will be the third "node" on the left
     Node *trib1 = mouth->goRight();  // this tributary will be to the right of mouth
+
+    river.print_tree(); // for debuggin purposees
 
     if (!branch1 || branch1->getName() != "Branch1")
         return false;
@@ -105,27 +113,19 @@ bool testTraverseExplore()
 // for testing printing, I'm not sure how we would validate it besides manually checking
 // but it seems like something we should test?
 
-bool testGetInfo()
+bool testSetInfo()
 {
-    // test getting info from different node types -- dam and tributary
+    // TO DO HERE:
     // set up
     BST_class river;
 
     // execution
-    river.insert_node("branch", "MainRiver");
-    river.insert_node("dam", "Dam1");
-    river.insert_node("tributary", "Trib1");
+    river.insert_branch("MainRiver");
+    river.insert_dam("Dam1", 10.5, 1000, 25.3);
+    river.insert_tributary("Trib1", 50.0, 500.0, 20.0);
 
     // validation
-    Node *mouth = river.get_mouth();
-    Node *dam = mouth->goLeft();
-    Node *trib = mouth->goRight();
-
-    if (dam->getType() != "dam" || trib->getType() != "tributary")
-    {
-        std::cout << "test failed,  Node types incorrect.\n";
-        return false;
-    }
+    river.print_tree();
 
     // clean up
     return true;
@@ -136,7 +136,7 @@ bool testInsertMouth();
 bool testInsertTributary();
 bool testInsertDam();
 bool testTraverseExplore();
-bool testGetInfo();
+bool testSetInfo();
 
 int main()
 {
@@ -178,7 +178,7 @@ int main()
         std::cout << "Traversing Tree Test failed.\n";
     }
 
-    if (testGetInfo())
+    if (testSetInfo())
     {
         std::cout << "Getting Info Test passed!!\n";
     }

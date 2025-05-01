@@ -47,7 +47,7 @@ Dam::Dam(const std::string &name, double temp, int cap, double h)
 {
     tempWater = temp;
     capacity = cap;
-    h = height;
+    height = h;
 }
 
 // Accessor methods for Dam-specific attributes

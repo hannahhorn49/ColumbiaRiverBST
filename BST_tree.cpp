@@ -312,7 +312,64 @@ void BST_program::add_node()
 
 void BST_program::explore_river()
 {
-    // navigate
+    //calls the helper function starting at the mouth of the river 
+    explore_river(river.get_mouth()); //where are we initiating the tree we are working on?! need to connect this to get_mouth()
+}
+
+void BST_program::explore_river(Node *node)
+{
+    std::cout << "Let us explore the river!" << std::endl;
+    std::cout << "Please pick an option below that describes what you would like to do: " << std::endl;
+    std::cout << "You are currently at: " << node->getName() << std::endl;
+    if (node->goLeft() != nullptr)
+    {
+        std::cout << "L) You can go left" << std::endl;
+    }
+    if(node->goRight() != nullptr)
+    {
+        std::cout << "R) You can go right" << std::endl;
+    }
+    if (node->getParent() != nullptr)
+    {
+        std::cout << "B) You can go backwards" << std::endl;
+    }
+    if (node != nullptr)
+    {
+        std::cout << "I) You can get the information of the current node you are at" << std::endl;
+    }
+    std::cout << "E) Exit" << std::endl;
+    std::string choiceExplore;
+    std::cin >> choiceExplore;
+
+    if (choiceExplore == "L" || choiceExplore == "l")
+    {
+        explore_river(node->goLeft());
+    }
+    else if (choiceExplore == "R" || choiceExplore == "r")
+    {
+        explore_river(node->goRight());
+    }
+    else if (choiceExplore == "B" || choiceExplore == "b")
+    {
+        explore_river(node->getParent());
+    }
+    else if ((choiceExplore == "I" || choiceExplore == "i"))
+    {
+        print_node_info(node);
+    }
+    else if (choiceExplore == "E" || choiceExplore == "e")
+    {
+        showMenu();
+    }
+}
+
+void BST_program::print_node_info(Node *node)
+{
+    std::cout << "--------------------------------Selected Node Information: ----------------------------------------" << std::endl;
+    std::cout << "---------------------------------------------------------------------------------------------------" << std::endl;
+    node->getInfo(); //do we need another getInfo( ) class because we already have the one in the Node class? 
+    std::cout << "---------------------------------------------------------------------------------------------------" << std::endl;
+
 }
 
 void BST_program::print_river()

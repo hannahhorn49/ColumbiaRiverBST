@@ -218,6 +218,24 @@ void BST_class::store_in_file()
     // prob need a helper function for this??
 }
 
+void BST_program::loadDamData(const std::string &filename)
+{
+    river.loadDamData(filename);
+}
+
+void BST_program::loadTribData(const std::string &filename)
+{
+    river.loadTribData(filename);
+}
+
+void BST_program::setupRiver()
+{
+    river.insert_branch("Columbia River");
+    loadDamData("Dams.csv");
+    loadTribData("Tributaries.csv");
+    river.print_tree();
+}
+
 void BST_program::showMenu()
 {
     // display the menu (do while loop?)
@@ -312,67 +330,98 @@ void BST_program::add_node()
 
 void BST_program::explore_river()
 {
-    //calls the helper function starting at the mouth of the river 
-    explore_river(river.get_mouth()); //where are we initiating the tree we are working on?! need to connect this to get_mouth()
+    // calls the helper function starting at the mouth of the river
+    Node *start = river.get_mouth();
+    // check to make sure there is a "river" to explore
+    if (start == nullptr)
+    {
+        std::cout << "The river is currently empty. Please add a node first to be able to explore.\n";
+        return;
+    }
+
+    explore_river(start);
 }
 
 void BST_program::explore_river(Node *node)
 {
-    std::cout << "Let us explore the river!" << std::endl;
-    std::cout << "Please pick an option below that describes what you would like to do: " << std::endl;
-    std::cout << "You are currently at: " << node->getName() << std::endl;
-    if (node->goLeft() != nullptr)
-    {
-        std::cout << "L) You can go left" << std::endl;
-    }
-    if(node->goRight() != nullptr)
-    {
-        std::cout << "R) You can go right" << std::endl;
-    }
-    if (node->getParent() != nullptr)
-    {
-        std::cout << "B) You can go backwards" << std::endl;
-    }
-    if (node != nullptr)
-    {
-        std::cout << "I) You can get the information of the current node you are at" << std::endl;
-    }
-    std::cout << "E) Exit" << std::endl;
     std::string choiceExplore;
-    std::cin >> choiceExplore;
 
-    if (choiceExplore == "L" || choiceExplore == "l")
+    while (true) // keeps user in explore mode until they choose to exit
     {
-        explore_river(node->goLeft());
+        std::cout << "Let us explore the river!" << std::endl;
+        std::cout << "Please pick an option below that describes what you would like to do: " << std::endl;
+        std::cout << "You are currently at: " << node->getName() << std::endl;
+
+        if (node->goLeft() != nullptr)
+        {
+            std::cout << "L) You can go left to: " << node->goLeft()->getName() << "\n";
+        }
+        if (node->goRight() != nullptr)
+        {
+            std::cout << "R) You can go right to: " << node->goRight()->getName() << "\n";
+        }
+        if (node->getParent() != nullptr)
+        {
+            std::cout << "B) You can go backwards to: " << node->getParent()->getName() << "\n";
+        }
+
+        std::cout << "I) Find out more about this location\n";
+        std::cout << "E) Exit to Main Menu\n";
+        std::cout << "====================================\n";
+        std::cout << "Your choice: ";
+        std::cin >> choiceExplore;
+
+        if (choiceExplore == "L" || choiceExplore == "l")
+        {
+            if (node->goLeft() != nullptr)
+                node = node->goLeft();
+            else
+                std::cout << "No left path from here.\n";
+        }
+        else if (choiceExplore == "R" || choiceExplore == "r")
+        {
+            if (node->goRight() != nullptr)
+                node = node->goRight();
+            else
+                std::cout << "No right path from here.\n";
+        }
+        else if (choiceExplore == "B" || choiceExplore == "b")
+        {
+            if (node->getParent() != nullptr)
+                node = node->getParent();
+            else
+                std::cout << "No parent node to go back to.\n";
+        }
+        else if ((choiceExplore == "I" || choiceExplore == "i"))
+        {
+            print_node_info(node);
+        }
+        else if (choiceExplore == "E" || choiceExplore == "e")
+        {
+            break; // exit explore loop and return to menu
+        }
+        else
+        {
+            std::cout << "Invalid option. Please try again.\n";
+        }
+
+        std::cout << std::endl; // space before next loop
     }
-    else if (choiceExplore == "R" || choiceExplore == "r")
-    {
-        explore_river(node->goRight());
-    }
-    else if (choiceExplore == "B" || choiceExplore == "b")
-    {
-        explore_river(node->getParent());
-    }
-    else if ((choiceExplore == "I" || choiceExplore == "i"))
-    {
-        print_node_info(node);
-    }
-    else if (choiceExplore == "E" || choiceExplore == "e")
-    {
-        showMenu();
-    }
+
+    showMenu(); // return to menu after exit
 }
 
 void BST_program::print_node_info(Node *node)
 {
     std::cout << "--------------------------------Selected Node Information: ----------------------------------------" << std::endl;
     std::cout << "---------------------------------------------------------------------------------------------------" << std::endl;
-    node->getInfo(); //do we need another getInfo( ) class because we already have the one in the Node class? 
+    std::cout << node->getInfo() << std::endl;
     std::cout << "---------------------------------------------------------------------------------------------------" << std::endl;
-
 }
 
 void BST_program::print_river()
 {
-    // call print tree function here?
+    std::cout << "\n========= The Columbia River System =========\n";
+    river.print_tree();
+    std::cout << "=============================================\n";
 }

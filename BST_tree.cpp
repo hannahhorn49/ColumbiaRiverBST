@@ -82,6 +82,7 @@ bool BST_class::recursive_trib_insert(Node *&node, const std::string name, std::
     // check if this node is a branch and has space for a tributary
     if (node->getType() == "branch" && node->goRight() == nullptr)
     {
+        std::cout<< name << std::endl;
         node->goRight() = new Tributary(name, direction, length, basinSize, averageDischarge);
         node->goRight()->getParent() = node;
         return true;

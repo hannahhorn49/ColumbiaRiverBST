@@ -27,6 +27,10 @@ public:
     std::string getName() const;
     std::string getType() const;
 
+    void setLeft(Node *newLeft) { left = newLeft; }
+    void setRight(Node *newRight) { right = newRight; }
+    void setParent(Node *newParent) { parent = newParent; }
+
     // we should use a virtual destructor here
     // (correct destructor for derived class is called when object is deleted through a base class pointer)
     virtual ~Node();

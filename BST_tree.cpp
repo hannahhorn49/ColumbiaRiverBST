@@ -79,21 +79,17 @@ bool BST_class::recursive_trib_insert(Node *&node, const std::string name, std::
     if (node == nullptr)
         return false;
 
-    // check if this node is a branch and has space for a tributary
     if (node->getType() == "branch" && node->goRight() == nullptr)
     {
         std::cout<< name << std::endl;
         node->goRight() = new Tributary(name, direction, length, basinSize, averageDischarge);
         node->goRight()->getParent() = node;
         return true;
+    }else{
+        bool leftInserted = recursive_trib_insert(node->goLeft(), name, direction, length, basinSize, averageDischarge);
+        return leftInserted;
     }
 
-    // want to try left subtree first
-    if (recursive_trib_insert(node->goLeft(), name, direction, length, basinSize, averageDischarge))
-        return true;
-
-    // then try right subtree
-    return recursive_trib_insert(node->goRight(), name, direction, length, basinSize, averageDischarge);
 }
 
 void BST_class::loadDamData(const std::string &filename)
@@ -164,12 +160,14 @@ void BST_class::loadTribData(const std::string &filename)
 
         std::getline(ss, lengthStr, ',');
         length = (lengthStr == "NA") ? 0 : std::stoi(lengthStr);
-
+        //std::cout << "past length" << std::endl;
         std::getline(ss, basinSizeStr, ',');
         basinSize = (basinSizeStr == "NA") ? 0.0 : std::stod(basinSizeStr);
+        //std::cout << "past bs" << std::endl;
 
         std::getline(ss, avgDischargeStr, ',');
         average_discharge = (avgDischargeStr == "NA") ? 0.0 : std::stod(avgDischargeStr);
+        
 
         insert_tributary(name, direction, length, basinSize, average_discharge); // insert into tree
     }

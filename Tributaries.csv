@@ -1,7 +1,13 @@
 Name,Direction,Length,Basin Size (km^2),Average Discharge (m^3/s)
 Cowlitz,Right,169,6698,286.6
 Willamette,Left,301,28949,1098.7
+Lewis,Right,153,2709,173.4
+Deschutes,Left,406,27549.6,215.7
+John Day,Left,457,20521.5,80.4
+Yakima,Right,344,15930.4,100.3
+Umatilla,Left,143,6345,14
 Snake River,Left,1735,160938.7,1755.6
+Crab Creek,Left,262,13200,40.4
+Methow,Right,129,4727,44.4
 Okanagan River,Right,115,8200,3039
 Spokane River,Left,111,6020,7946
-Pend Orielle,Left,771,67055.50,850.2

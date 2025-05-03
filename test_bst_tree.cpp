@@ -1,5 +1,6 @@
 #include "BST_Tree.hpp"
 #include <iostream>
+#include <fstream>
 
 bool testInsertMouth()
 {
@@ -131,12 +132,47 @@ bool testSetInfo()
     return true;
 }
 
+bool testStoreInFile(){
+    // set up
+    BST_class river;
+
+    // execution
+    river.insert_branch("MainRiver");
+    river.insert_branch("Branch1");                                   // goes left of MainRiver
+    river.insert_dam("McNary", 183, 1133, 1954, "Lake Wallula");      // goes left of Branch1
+    river.insert_tributary("Willamette", "Left", 301, 28949, 1098.7); // goes right of MainRiver
+
+    // validation
+    Node *mouth = river.get_mouth();
+    Node *branch1 = mouth->goLeft(); // this will be the second "node"
+    Node *dam1 = branch1->goLeft();  // the dam will be the third "node" on the left
+    Node *trib1 = mouth->goRight();  // this tributary will be to the right of mouth
+
+    river.print_tree(); // for debuggin purposees
+    river.store_in_file();
+    std::ifstream file_to_open("river_system.bin", std::ios::binary);
+    std::ofstream file_to_write("river_system.txt");
+    float value;
+    if(file_to_open.is_open()){
+        while(!file_to_open.eof()){
+            file_to_open.read((char *)&value, sizeof(float));
+            file_to_write<<value;
+        }
+    }
+    // clean up
+    
+
+    return true;
+}
+
+
 // call functions here
 bool testInsertMouth();
 bool testInsertTributary();
 bool testInsertDam();
 bool testTraverseExplore();
 bool testSetInfo();
+bool testStoreInFile();
 
 int main()
 {
@@ -186,6 +222,13 @@ int main()
     {
         std::cout << "Getting Info Test failed.\n";
     }
-
+    if (testStoreInFile())
+    {
+        std::cout << "Storing in file passed!!\n";
+    }
+    else
+    {
+        std::cout << "Storing in file failed.\n";
+    }
     return 0;
 }

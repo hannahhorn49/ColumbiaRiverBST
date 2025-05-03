@@ -26,32 +26,6 @@ bool testInsertMouth()
     return true;
 }
 
-bool testInsertTributary()
-{
-    // testing adding a tributary to the river
-    // set up
-    BST_class river;
-
-    // execution
-    river.insert_branch("MainRiver");
-    river.insert_tributary("Cowlitz", "right", 169, 6698, 286.6);
-
-    Node *mouth = river.get_mouth();
-    Node *trib = mouth->goRight();
-
-    river.print_tree(); // for debuggin purposees
-
-    // validation
-    if (trib == nullptr || trib->getName() != "Cowlitz")
-    {
-        std::cout << "test failed, tributary not correctly added.\n";
-        return false;
-    }
-
-    // clean up
-    return true;
-}
-
 bool testInsertDam()
 {
     // testing adding a dam to the river
@@ -75,6 +49,37 @@ bool testInsertDam()
     }
 
     // clean up
+    return true;
+}
+
+bool testInsertTributary()
+{
+    BST_class river;
+
+    river.insert_branch("MainRiver");
+    river.insert_tributary("Cowlitz", "right", 169, 6698, 286.6);
+    river.insert_tributary("Willamette", "left", 187, 29800, 302.0);
+
+    river.print_tree(); // optional debugging
+
+    Node *root = river.get_mouth();    // MainRiver
+    Node *cowlitz = root->goRight();   // Should be Cowlitz
+    Node *bonneville = root->goLeft(); // Bonneville Dam
+    Node *willamette = bonneville ? bonneville->goRight() : nullptr;
+
+    if (!cowlitz || cowlitz->getName() != "Cowlitz")
+    {
+        std::cout << "Test failed: Cowlitz not inserted correctly.\n";
+        return false;
+    }
+
+    if (!willamette || willamette->getName() != "Willamette")
+    {
+        std::cout << "Test failed: Willamette not inserted correctly.\n";
+        return false;
+    }
+
+    std::cout << "Test passed: Both Cowlitz and Willamette inserted correctly.\n";
     return true;
 }
 
@@ -132,7 +137,8 @@ bool testSetInfo()
     return true;
 }
 
-bool testStoreInFile(){
+bool testStoreInFile()
+{
     // set up
     BST_class river;
 
@@ -153,18 +159,18 @@ bool testStoreInFile(){
     std::ifstream file_to_open("river_system.bin", std::ios::binary);
     std::ofstream file_to_write("river_system.txt");
     float value;
-    if(file_to_open.is_open()){
-        while(!file_to_open.eof()){
+    if (file_to_open.is_open())
+    {
+        while (!file_to_open.eof())
+        {
             file_to_open.read((char *)&value, sizeof(float));
-            file_to_write<<value;
+            file_to_write << value;
         }
     }
     // clean up
-    
 
     return true;
 }
-
 
 // call functions here
 bool testInsertMouth();

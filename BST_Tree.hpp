@@ -49,7 +49,7 @@ public:
     void print_river();
 
 private:
-    Node *current_location; // pointer to where the user is in the river //DO NOT KNOW if we need this if we jsut keep updating node
+    Node *current_location; // pointer to where the user is in the river
     // function to update the current location
     BST_class river;
     void print_node_info(Node *node);

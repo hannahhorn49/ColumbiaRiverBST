@@ -20,8 +20,8 @@ public:
         return getName() + " (" + getType() + ")";
     }
 
-    Node *&goLeft();
-    Node *&goRight();
+    Node *&goLeft() { return left; }
+    Node *&goRight() { return right; }
     Node *&getParent();
 
     std::string getName() const;

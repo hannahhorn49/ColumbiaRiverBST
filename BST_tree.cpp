@@ -211,12 +211,62 @@ void BST_class::print_tree(Node *node, int space)
     print_tree(node->goLeft(), space);
 }
 
+// sotre_in_file helper function
+void BST_class::store_node(std::ofstream &out, Node *node){
+    if (!node){
+        return;
+    }
+
+    // Writes the length of the string and then writes it into characters
+    std::string nodeType = node->getType();
+    size_t typeLength = nodeType.length();
+    out.write(reinterpret_cast<const char *>(&typeLength), sizeof(typeLength));
+    out.write(nodeType.c_str(), typeLength);
+
+    // Same but with the name
+    std::string nodeName = node->getName();
+    size_t nameLength = nodeType.length();
+    out.write(reinterpret_cast<const char *>(&nameLength), sizeof(nameLength));
+    out.write(nodeName.c_str(), nameLength);
+
+    // Stores tributary specific data
+    if (nodeType == "Tributary"){
+        Tributary *tri = dynamic_cast<Tributary *>(node);
+        int length = tri->getLength();
+        double basin = tri->getBasinSize();
+        double discharge = tri->getAverageDischarge();
+        std::string direction = tri->getDirection();
+        out.write(reinterpret_cast<const char *>(&length), sizeof(length));
+        out.write(reinterpret_cast<const char *>(&basin), sizeof(basin));
+        out.write(reinterpret_cast<const char *>(&discharge), sizeof(discharge));
+        size_t directionLength = direction.length();
+        out.write(reinterpret_cast<const char *>(&directionLength), sizeof(directionLength));
+        out.write(direction.c_str(), directionLength);
+    }
+
+    // Stores dam specific data
+    else if(nodeType == "Dam"){
+        Dam *dam = dynamic_cast<Dam *>(node);
+        int capacity = dam->getCapacity();
+        double height = dam->getHeight();
+        double year = dam->getYear();
+        std::string resevoir = dam->getReservoir();
+        out.write(reinterpret_cast<const char *>(&capacity), sizeof(capacity));
+        out.write(reinterpret_cast<const char *>(&height), sizeof(height));
+        out.write(reinterpret_cast<const char *>(&year), sizeof(year));
+        size_t resevoirLength = resevoir.length();
+        out.write(reinterpret_cast<const char *>(&resevoirLength), sizeof(resevoirLength));
+        out.write(resevoir.c_str(), resevoirLength);
+    }
+    store_node(out,node->goLeft());
+    store_node(out,node->goRight());
+}
+
 void BST_class::store_in_file()
 {
-    // open a file that we will write to (output file)
-    // prob need to recursively traverse the tree
-    // at each node, need to write its type and any associated data
-    // prob need a helper function for this??
+    std::ofstream out("river_system.bin", std::ios::binary);
+    store_node(out,mouth);
+    out.close();
 }
 
 void BST_program::loadDamData(const std::string &filename)

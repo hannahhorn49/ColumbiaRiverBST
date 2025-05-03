@@ -20,6 +20,7 @@ public:
 
     // somehow puts it in a workable file
     void store_in_file();
+    void store_node(std::ofstream &out, Node *node);
 
     // function to load trib and dam data from our csv files
     void loadDamData(const std::string &filename);

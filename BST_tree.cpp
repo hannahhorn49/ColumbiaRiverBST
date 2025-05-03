@@ -227,7 +227,20 @@ void BST_class::print_tree(Node *node, int space)
         std::cout << " ";
     }
 
-    std::cout << node->getInfo() << std::endl;
+    //to make it more noticeable on where the tributaries should go!! 
+    //std::cout << node->getInfo() << std::endl;
+    if(node->getType() == "Tributary")
+    {
+        std::cout << "----->" << node->getName() << std::endl;
+    }
+    if (node->getType() == "branch" || node->getType() == "Dam")
+    {
+        //std::cout << "/" << std::endl;
+        //std::cout << "/" << std::endl;
+        //std::cout << "/" << std::endl;
+        std::cout << node->getName() << std::endl;
+    }
+
 
     // then process left child
     print_tree(node->goLeft(), space);
@@ -303,7 +316,7 @@ void BST_program::setupRiver()
         // need to initialize the river's root branch!!
         river.insert_branch("Columbia River");
     }
-
+    river.insert_branch("Columbia River Branch");
     loadDamData("Dams.csv");
     loadTribData("Tributaries.csv");
     river.print_tree();

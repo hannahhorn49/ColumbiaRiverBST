@@ -227,6 +227,7 @@ void BST_class::print_tree(Node *node, int space)
         std::cout << " ";
     }
 
+    //to make it more noticeable on where the tributaries should go!! 
     //std::cout << node->getInfo() << std::endl;
     if(node->getType() == "Tributary")
     {

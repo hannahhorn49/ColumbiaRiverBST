@@ -11,15 +11,6 @@ Node::Node(const std::string &name, const std::string &type)
 }
 
 // river navigation methods here
-Node *&Node::goLeft()
-{
-    return left;
-}
-
-Node *&Node::goRight()
-{
-    return right;
-}
 
 Node *&Node::getParent()
 {

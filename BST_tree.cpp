@@ -87,7 +87,7 @@ bool BST_class::recursive_trib_insert(Node *&node, const std::string name, std::
     std::cout << "Visiting node: " << node->getName() << " (" << type << ")" << std::endl;
 
     // if the node is a branch or dam, it should accept a tributary to be inserted on the RIGHT
-    if (type == "branch" || type == "dam")
+    if (type == "branch") //|| type == "dam")
     {
         Node *&right = node->goRight();
 
@@ -99,7 +99,7 @@ bool BST_class::recursive_trib_insert(Node *&node, const std::string name, std::
             std::cout << ">>> Inserted tributary '" << name << "' to the RIGHT of '" << node->getName() << "'\n";
             return true;
         }
-        else if (right->getType() == "branch" || right->getType() == "dam")
+        else if (right->getType() == "branch") //right->getType() == "dam")
         {
             std::cout << "Right of '" << node->getName() << "' is occupied by a branch or dam.\n";
             if (recursive_trib_insert(right, name, direction, length, basinSize, averageDischarge))
@@ -156,6 +156,7 @@ void BST_program::loadDamData(const std::string &filename)
         year = (yearStr == "NA") ? 0 : std::stoi(yearStr);
 
         river.insert_dam(name, height, capacity, year, reservoirFormed);
+        river.insert_branch("Columbia River branch");
     }
 
     file.close();

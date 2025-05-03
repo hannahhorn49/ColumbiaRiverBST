@@ -133,8 +133,50 @@ bool BST_class::recursive_trib_insert(Node *&node, const std::string name, std::
         }
     }
 
-    std::cout << "No valid spot found for tributary " << name << " at node: " << node->getName() << "\n";
-    return false;
+    file.close();
+}
+
+void BST_class::loadTribData(const std::string &filename)
+{
+    std::ifstream file(filename);
+    std::string line;
+
+    if (!file.is_open())
+    {
+        std::cout << "Error opening file: " << filename << std::endl;
+        return;
+    }
+
+    std::getline(file, line); // don't need to read the header row
+
+    while (std::getline(file, line)) // loop through each data row
+    {
+        std::stringstream ss(line);
+        std::string name, direction;
+        std::string lengthStr, basinSizeStr, avgDischargeStr;
+        int length = 0;
+        double basinSize = 0.0, average_discharge = 0.0;
+
+        // actually read values from CSV
+        std::getline(ss, name, ',');
+        std::getline(ss, direction, ',');
+
+        std::getline(ss, lengthStr, ',');
+        length = (lengthStr == "NA") ? 0 : std::stoi(lengthStr);
+        //std::cout << "past length" << std::endl;
+        std::getline(ss, basinSizeStr, ',');
+        basinSize = (basinSizeStr == "NA") ? 0.0 : std::stod(basinSizeStr);
+        //std::cout << "past bs" << std::endl;
+
+        std::getline(ss, avgDischargeStr, ',');
+        average_discharge = (avgDischargeStr == "NA") ? 0.0 : std::stod(avgDischargeStr);
+        
+
+        insert_tributary(name, direction, length, basinSize, average_discharge); // insert into tree
+    }
+
+    file.close();
+
 }
 
 void BST_class::print_tree()

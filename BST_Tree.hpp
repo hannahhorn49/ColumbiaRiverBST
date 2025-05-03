@@ -22,10 +22,6 @@ public:
     void store_in_file();
     void store_node(std::ofstream &out, Node *node);
 
-    // function to load trib and dam data from our csv files
-    void loadDamData(const std::string &filename);
-    void loadTribData(const std::string &filename);
-
 private:
     Node *mouth;                            // river's starting point (aka the root)
     void print_tree(Node *node, int space); // recursive helper to print the tree

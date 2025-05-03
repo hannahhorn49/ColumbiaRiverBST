@@ -77,104 +77,64 @@ void BST_class::recursive_dam_insert(Node *&node, std::string name, int height, 
 bool BST_class::recursive_trib_insert(Node *&node, const std::string name, std::string direction, int length, double basinSize, double averageDischarge)
 {
     if (node == nullptr)
+    {
+        std::cout << "Debugging: reached a nullptr\n";
         return false;
-
-    // check if this node is a branch and has space for a tributary
-    if (node->getType() == "branch" && node->goRight() == nullptr)
-    {
-        std::cout<< name << std::endl;
-        node->goRight() = new Tributary(name, direction, length, basinSize, averageDischarge);
-        node->goRight()->getParent() = node;
-        return true;
     }
 
-    // want to try left subtree first
-    if (recursive_trib_insert(node->goLeft(), name, direction, length, basinSize, averageDischarge))
-        return true;
+    std::cout << "Checking node: " << node->getName() << " Type: " << node->getType() << "\n";
 
-    // then try right subtree
-    return recursive_trib_insert(node->goRight(), name, direction, length, basinSize, averageDischarge);
-}
+    std::string type = node->getType();
 
-void BST_class::loadDamData(const std::string &filename)
-{
-    std::ifstream file(filename); // opens file passed in
-    std::string line;             // stores each line read from file
-
-    if (!file.is_open())
+    if (type == "branch" || type == "dam")
     {
-        std::cout << "Error opening file: " << filename << std::endl;
-        return;
+        // if the right is empty, can insert tributary
+        if (node->goRight() == nullptr)
+        {
+            std::cout << "Adding tributary " << name << " to " << node->getName() << "\n";
+
+            Node *newTributary = new Tributary(name, direction, length, basinSize, averageDischarge);
+            node->setRight(newTributary);
+            newTributary->setParent(node);
+
+            return true;
+        }
+        else
+        {
+            std::cout << "Right child of " << node->getName() << " is occupied.\n";
+
+            std::string rightType = node->goRight()->getType();
+            if (rightType == "dam" || rightType == "tributary")
+            {
+                std::cout << "Attempting insertion in right subtree of " << node->goRight()->getName() << "\n";
+                if (recursive_trib_insert(node->goRight(), name, direction, length, basinSize, averageDischarge))
+                {
+                    return true;
+                }
+            }
+            if (rightType == "dam" && node->goRight()->goRight() == nullptr)
+            {
+                std::cout << "Inserting tributary " << name << " to the right of dam " << node->goRight()->getName() << "\n";
+                Node *newTributary = new Tributary(name, direction, length, basinSize, averageDischarge);
+                node->goRight()->setRight(newTributary);
+                newTributary->setParent(node->goRight());
+
+                return true;
+            }
+
+            std::cout << "Moving left.\n";
+            if (recursive_trib_insert(node->goLeft(), name, direction, length, basinSize, averageDischarge))
+            {
+                return true;
+            }
+
+            std::cout << "Now checking right subtree after left.\n";
+            return recursive_trib_insert(node->goRight(), name, direction, length, basinSize, averageDischarge);
+        }
     }
 
-    std::getline(file, line); // don't need to read the header row
-
-    while (std::getline(file, line)) // loop through each row in the table
-    {
-        std::stringstream ss(line);
-        std::string name, reservoir;
-        std::string heightStr, capacityStr, yearCompletedStr;
-        int height = 0, capacity = 0, year_completed = 0;
-
-        // actually values from CSV
-        std::getline(ss, name, ',');
-        std::getline(ss, heightStr, ',');
-        height = (heightStr == "NA") ? 0 : std::stoi(heightStr);
-
-        std::getline(ss, capacityStr, ',');
-        capacity = (capacityStr == "NA") ? 0 : std::stoi(capacityStr);
-
-        std::getline(ss, yearCompletedStr, ',');
-        year_completed = (yearCompletedStr == "NA") ? 0 : std::stoi(yearCompletedStr);
-
-        std::getline(ss, reservoir, ',');
-        if (reservoir == "NA")
-            reservoir = "Unknown";
-
-        insert_dam(name, height, capacity, year_completed, reservoir); // insert into tree
-    }
-
-    file.close();
-}
-
-void BST_class::loadTribData(const std::string &filename)
-{
-    std::ifstream file(filename);
-    std::string line;
-
-    if (!file.is_open())
-    {
-        std::cout << "Error opening file: " << filename << std::endl;
-        return;
-    }
-
-    std::getline(file, line); // don't need to read the header row
-
-    while (std::getline(file, line)) // loop through each data row
-    {
-        std::stringstream ss(line);
-        std::string name, direction;
-        std::string lengthStr, basinSizeStr, avgDischargeStr;
-        int length = 0;
-        double basinSize = 0.0, average_discharge = 0.0;
-
-        // actually read values from CSV
-        std::getline(ss, name, ',');
-        std::getline(ss, direction, ',');
-
-        std::getline(ss, lengthStr, ',');
-        length = (lengthStr == "NA") ? 0 : std::stoi(lengthStr);
-
-        std::getline(ss, basinSizeStr, ',');
-        basinSize = (basinSizeStr == "NA") ? 0.0 : std::stod(basinSizeStr);
-
-        std::getline(ss, avgDischargeStr, ',');
-        average_discharge = (avgDischargeStr == "NA") ? 0.0 : std::stod(avgDischargeStr);
-
-        insert_tributary(name, direction, length, basinSize, average_discharge); // insert into tree
-    }
-
-    file.close();
+    std::cout << "No valid spot found for tributary " << name << " at node: " << node->getName() << "\n";
+    return false;
 }
 
 void BST_class::print_tree()
@@ -212,8 +172,10 @@ void BST_class::print_tree(Node *node, int space)
 }
 
 // sotre_in_file helper function
-void BST_class::store_node(std::ofstream &out, Node *node){
-    if (!node){
+void BST_class::store_node(std::ofstream &out, Node *node)
+{
+    if (!node)
+    {
         return;
     }
 
@@ -230,7 +192,8 @@ void BST_class::store_node(std::ofstream &out, Node *node){
     out.write(nodeName.c_str(), nameLength);
 
     // Stores tributary specific data
-    if (nodeType == "Tributary"){
+    if (nodeType == "Tributary")
+    {
         Tributary *tri = dynamic_cast<Tributary *>(node);
         int length = tri->getLength();
         double basin = tri->getBasinSize();
@@ -245,7 +208,8 @@ void BST_class::store_node(std::ofstream &out, Node *node){
     }
 
     // Stores dam specific data
-    else if(nodeType == "Dam"){
+    else if (nodeType == "Dam")
+    {
         Dam *dam = dynamic_cast<Dam *>(node);
         int capacity = dam->getCapacity();
         double height = dam->getHeight();
@@ -258,30 +222,107 @@ void BST_class::store_node(std::ofstream &out, Node *node){
         out.write(reinterpret_cast<const char *>(&resevoirLength), sizeof(resevoirLength));
         out.write(resevoir.c_str(), resevoirLength);
     }
-    store_node(out,node->goLeft());
-    store_node(out,node->goRight());
+    store_node(out, node->goLeft());
+    store_node(out, node->goRight());
 }
 
 void BST_class::store_in_file()
 {
     std::ofstream out("river_system.bin", std::ios::binary);
-    store_node(out,mouth);
+    store_node(out, mouth);
     out.close();
 }
 
 void BST_program::loadDamData(const std::string &filename)
 {
-    river.loadDamData(filename);
+    std::ifstream file(filename); // opens file passed in
+    std::string line;             // stores each line read from file
+
+    if (!file.is_open())
+    {
+        std::cout << "Error opening file: " << filename << std::endl;
+        return;
+    }
+
+    std::getline(file, line); // don't need to read the header row
+
+    while (std::getline(file, line)) // loop through each row in the table
+    {
+        std::stringstream ss(line);
+        std::string name, reservoir;
+        std::string heightStr, capacityStr, yearCompletedStr;
+        int height = 0, capacity = 0, year_completed = 0;
+
+        // actually values from CSV
+        std::getline(ss, name, ',');
+        std::getline(ss, heightStr, ',');
+        height = (heightStr == "NA") ? 0 : std::stoi(heightStr);
+
+        std::getline(ss, capacityStr, ',');
+        capacity = (capacityStr == "NA") ? 0 : std::stoi(capacityStr);
+
+        std::getline(ss, yearCompletedStr, ',');
+        year_completed = (yearCompletedStr == "NA") ? 0 : std::stoi(yearCompletedStr);
+
+        std::getline(ss, reservoir, ',');
+        if (reservoir == "NA")
+            reservoir = "Unknown";
+
+        river.insert_dam(name, height, capacity, year_completed, reservoir); // insert into tree
+    }
+
+    file.close();
 }
 
 void BST_program::loadTribData(const std::string &filename)
 {
-    river.loadTribData(filename);
+    std::ifstream file(filename);
+    if (!file.is_open())
+    {
+        std::cerr << "Error: Could not open " << filename << "\n";
+        return;
+    }
+
+    std::string line;
+    std::getline(file, line); // skip header
+
+    while (std::getline(file, line))
+    {
+        std::stringstream ss(line);
+        std::string name, direction, lengthStr, basinStr, dischargeStr;
+
+        std::getline(ss, name, ',');
+        std::getline(ss, direction, ',');
+        std::getline(ss, lengthStr, ',');
+        std::getline(ss, basinStr, ',');
+        std::getline(ss, dischargeStr, ',');
+
+        if (name.empty() || direction.empty() || lengthStr.empty() || basinStr.empty() || dischargeStr.empty())
+        {
+            std::cerr << "Skipping incomplete line: " << line << "\n";
+            continue;
+        }
+
+        int length = std::stoi(lengthStr);
+        double basin = std::stod(basinStr);
+        double discharge = std::stod(dischargeStr);
+
+        std::cout << "Inserting tributary: " << name << "\n"; // DEBUG LINE
+        river.insert_tributary(name, direction, length, basin, discharge);
+    }
+
+    file.close();
 }
 
 void BST_program::setupRiver()
 {
-    river.insert_branch("Columbia River");
+    // make sure the root node is set (mouth) before inserting tributaries
+    if (river.get_mouth() == nullptr)
+    {
+        // need to initialize the river's root branch!!
+        river.insert_branch("Columbia River");
+    }
+
     loadDamData("Dams.csv");
     loadTribData("Tributaries.csv");
     river.print_tree();

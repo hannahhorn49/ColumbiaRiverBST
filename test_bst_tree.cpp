@@ -54,22 +54,32 @@ bool testInsertDam()
 
 bool testInsertTributary()
 {
+    // set up
     BST_class river;
 
+    // execution
     river.insert_branch("MainRiver");
     river.insert_tributary("Cowlitz", "right", 169, 6698, 286.6);
-    river.insert_tributary("Willamette", "left", 187, 29800, 302.0);
+    river.insert_branch("Columbia River");
+    river.insert_tributary("Willamette", "right", 187, 29800, 302.0);
 
     river.print_tree(); // optional debugging
 
-    Node *root = river.get_mouth();    // MainRiver
-    Node *cowlitz = root->goRight();   // Should be Cowlitz
-    Node *bonneville = root->goLeft(); // Bonneville Dam
-    Node *willamette = bonneville ? bonneville->goRight() : nullptr;
+    Node *root = river.get_mouth();  // MainRiver
+    Node *cowlitz = root->goRight(); // Should be Cowlitz
+    Node *columbia = root->goLeft(); // Should be Columbia River
+    Node *willamette = columbia ? columbia->goRight() : nullptr;
 
+    // validation
     if (!cowlitz || cowlitz->getName() != "Cowlitz")
     {
         std::cout << "Test failed: Cowlitz not inserted correctly.\n";
+        return false;
+    }
+
+    if (!columbia || columbia->getName() != "Columbia River")
+    {
+        std::cout << "Test failed: Columbia River branch not inserted correctly.\n";
         return false;
     }
 
@@ -79,7 +89,9 @@ bool testInsertTributary()
         return false;
     }
 
-    std::cout << "Test passed: Both Cowlitz and Willamette inserted correctly.\n";
+    std::cout << "Test passed: All branches and tributaries inserted correctly.\n";
+
+    // clean up
     return true;
 }
 

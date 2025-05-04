@@ -40,7 +40,6 @@ void BST_class::insert_dam(const std::string name, int height, int capacity, int
 
 void BST_class::insert_tributary(std::string name, std::string direction, int length, double basinSize, double averageDischarge)
 {
-    std::cout << "\nAttempting to insert tributary: " << name << std::endl;
     if (!recursive_trib_insert(mouth, name, direction, length, basinSize, averageDischarge))
     {
         std::cout << "Failed to insert tributary: " << name << std::endl;
@@ -84,7 +83,7 @@ bool BST_class::recursive_trib_insert(Node *&node, const std::string name, std::
         return false;
 
     std::string type = node->getType();
-    std::cout << "Visiting node: " << node->getName() << " (" << type << ")" << std::endl;
+    // std::cout << "Visiting node: " << node->getName() << " (" << type << ")" << std::endl;
 
     // if the node is a branch or dam, it should accept a tributary to be inserted on the RIGHT
     if (type == "branch") //|| type == "dam")
@@ -96,18 +95,18 @@ bool BST_class::recursive_trib_insert(Node *&node, const std::string name, std::
             Node *newTributary = new Tributary(name, direction, length, basinSize, averageDischarge);
             node->setRight(newTributary);
             newTributary->setParent(node);
-            std::cout << ">>> Inserted tributary '" << name << "' to the RIGHT of '" << node->getName() << "'\n";
+            // std::cout << ">>> Inserted tributary '" << name << "' to the RIGHT of '" << node->getName() << "'\n";
             return true;
         }
-        else if (right->getType() == "branch") //right->getType() == "dam")
+        else if (right->getType() == "branch") // right->getType() == "dam")
         {
-            std::cout << "Right of '" << node->getName() << "' is occupied by a branch or dam.\n";
+            // std::cout << "Right of '" << node->getName() << "' is occupied by a branch or dam.\n";
             if (recursive_trib_insert(right, name, direction, length, basinSize, averageDischarge))
                 return true;
         }
         else
         {
-            std::cout << "Right of '" << node->getName() << "' is a tributary. Skipping deeper right recursion.\n";
+            // std::cout << "Right of '" << node->getName() << "' is a tributary. Skipping deeper right recursion.\n";
         }
     }
 
@@ -115,12 +114,12 @@ bool BST_class::recursive_trib_insert(Node *&node, const std::string name, std::
     Node *&left = node->goLeft();
     if (left != nullptr)
     {
-        std::cout << "Recursing LEFT from '" << node->getName() << "'...\n";
+        // std::cout << "Recursing LEFT from '" << node->getName() << "'...\n";
         if (recursive_trib_insert(left, name, direction, length, basinSize, averageDischarge))
             return true;
     }
 
-    std::cout << "No valid spot found for tributary " << name << " at node '" << node->getName() << "'\n";
+    // std::cout << "No valid spot found for tributary " << name << " at node '" << node->getName() << "'\n";
     return false;
 }
 
@@ -201,49 +200,40 @@ void BST_program::loadTribData(const std::string &filename)
 
 void BST_class::print_tree()
 {
-    print_tree(mouth, 0); // this is what the user would call
+    print_tree(mouth, 0);
 }
 
-void BST_class::print_tree(Node *node, int space)
+void BST_class::print_tree(Node *node, int depth)
 {
-    // want a constant horizontal spacing between levels
-    const int INDENT = 7;
-    // note: might need to change implementation, recursive print
+    const int INDENT = 4;
     if (node == nullptr)
     {
         return;
     }
 
-    space += INDENT;
+    // process the tributaries first
+    print_tree(node->goRight(), depth + 1);
 
-    // a way we could print it out is tributaries processed first (so printed higher than the node they are a child of?)
-    // can def change later
-    print_tree(node->goRight(), space);
-
-    // then print the current node (first pass would be root)
-    std::cout << std::endl;
-    for (int i = INDENT; i < space; i++)
+    // indentation logic
+    for (int i = 0; i < depth * INDENT; i++)
     {
         std::cout << " ";
     }
 
-    //to make it more noticeable on where the tributaries should go!! 
-    //std::cout << node->getInfo() << std::endl;
-    if(node->getType() == "Tributary")
+    if (node->getType() == "Dam")
     {
-        std::cout << "----->" << node->getName() << std::endl;
+        std::cout << "🚧 " << node->getName() << std::endl;
     }
-    if (node->getType() == "branch" || node->getType() == "Dam")
+    else if (node->getType() == "Tributary")
     {
-        //std::cout << "/" << std::endl;
-        //std::cout << "/" << std::endl;
-        //std::cout << "/" << std::endl;
-        std::cout << node->getName() << std::endl;
+        std::cout << "-> Tributary: " << node->getName() << std::endl;
+    }
+    else
+    {
+        std::cout << "|-- " << node->getName() << std::endl;
     }
 
-
-    // then process left child
-    print_tree(node->goLeft(), space);
+    print_tree(node->goLeft(), depth + 1);
 }
 
 // sotre_in_file helper function
